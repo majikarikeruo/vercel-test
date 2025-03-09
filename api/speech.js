@@ -21,8 +21,14 @@ export default async function GET(request) {
     }
     //APIから返ってきたデータを取得
     const data = await response.json();
+    console.log(4, data);
     //フロントにデータを返す
-    return new Response(JSON.stringify(data));
+    return new Response(JSON.stringify(data), {
+      status: 200,
+      headers: {
+        "content-type": "application/json",
+      },
+    });
   } catch (error) {
     console.error("Error fetching data:", error);
     return new Response(JSON.stringify(error), { status: 500 });
