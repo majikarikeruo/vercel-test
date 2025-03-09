@@ -13,7 +13,7 @@ export default async function GET(request) {
     });
     console.log(3, params);
     //APIにリクエストを送信
-    const response = await fetch(`/api/speech?${params}`);
+    const response = await fetch(`/api/speech?speaker=${request.query.speaker}&from=${request.query.from}&until=${request.query.until}`);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
