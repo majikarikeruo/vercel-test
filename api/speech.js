@@ -1,7 +1,8 @@
 //1つ目の引数がフロントからデータを受け取る固有の場所になっている
 export default async function GET(request) {
   //バックエンドのルート定義
-  console.log(request);
+  console.log(1, request.params);
+  console.log(2, request.query);
 
   try {
     // URLSearchParamsを使って、検索用のクエリパラメータ（speaker、from、until）を設定
