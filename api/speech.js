@@ -7,8 +7,13 @@ export default async function handler(request) {
     const until = fullUrl.searchParams.get("until");
 
     console.log("1. Received params:", { speaker, from, until });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5秒でタイムアウト
 
-    const response = await fetch(`https://kokkai.ndl.go.jp/api/speech?speaker=${speaker}&from=${from}&until=${until}&recordPacking=json`);
+    const response = await fetch(`https://kokkai.ndl.go.jp/api/speech?speaker=${speaker}&from=${from}&until=${until}&recordPacking=json`, {
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
 
     console.log("2. Response status:", response.status);
 
@@ -30,9 +35,10 @@ export default async function handler(request) {
     console.log("4. Parsed data:", data);
 
     return new Response(JSON.stringify(data), {
-      status: 200,
       headers: {
         "Content-Type": "application/json",
+        // キャッシュヘッダーを追加
+        "Cache-Control": "public, max-age=60, s-maxage=60",
       },
     });
   } catch (error) {
