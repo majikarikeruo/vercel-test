@@ -6,10 +6,10 @@ export default async function handler(request) {
 
   try {
     // URLSearchParamsを使って、検索用のクエリパラメータ（speaker、from、until）を設定
-    const { searchParams } = new URL(request.url);
-    const speaker = searchParams.get("speaker");
-    const from = searchParams.get("from");
-    const until = searchParams.get("until");
+    const fullUrl = new URL(request.url, "http://localhost"); // ベースURLは何でも良い
+    const speaker = fullUrl.searchParams.get("speaker");
+    const from = fullUrl.searchParams.get("from");
+    const until = fullUrl.searchParams.get("until");
 
     console.log(3, speaker, from, until);
     //APIにリクエストを送信
