@@ -8,40 +8,35 @@ export default async function handler(request) {
 
     console.log("1. Received params:", { speaker, from, until });
 
-    const apiUrl = `https://kokkai.ndl.go.jp/api/speech?${new URLSearchParams({
-      speaker,
-      from,
-      until,
-      recordPacking: "json",
-    })}`;
+    const response = await fetch(`https://kokkai.ndl.go.jp/api/speech?speaker=${speaker}&from=${from}&until=${until}&recordPacking=json`);
 
-    console.log("2. Requesting URL:", apiUrl);
-
-    // fetchの前後でログを追加
-    console.log("3. Starting fetch request...");
-    const response = await fetch(apiUrl);
-    console.log("4. Fetch completed, status:", response.status);
+    console.log("2. Response status:", response.status);
 
     if (!response.ok) {
       throw new Error(`API responded with status: ${response.status}`);
     }
 
-    console.log("5. Starting JSON parse...");
-    const data = await response.json();
-    console.log("6. JSON parse completed");
+    // レスポンスの内容を確認
+    const responseText = await response.text();
+    console.log("3. Response text:", responseText);
+
+    // 空のレスポンスをチェック
+    if (!responseText) {
+      throw new Error("Empty response from API");
+    }
+
+    // JSONとしてパース
+    const data = JSON.parse(responseText);
+    console.log("4. Parsed data:", data);
 
     return new Response(JSON.stringify(data), {
+      status: 200,
       headers: {
         "Content-Type": "application/json",
       },
     });
   } catch (error) {
-    console.error("Error details:", {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-    });
-
+    console.error("Error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: {
