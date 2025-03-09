@@ -13,7 +13,15 @@ export default async function handler(request) {
 
     console.log(3, speaker, from, until);
     //APIにリクエストを送信
-    const response = await fetch(`https://kokkai.ndl.go.jp/api/speech?speaker=${speaker}&from=${from}&until=${until}&recordPacking=json`);
+    const apiUrl = `https://kokkai.ndl.go.jp/api/speech?${new URLSearchParams({
+      speaker,
+      from,
+      until,
+      recordPacking: "json",
+    })}`;
+
+    const response = await fetch(apiUrl);
+    // const response = await fetch(`https://kokkai.ndl.go.jp/api/speech?speaker=${speaker}&from=${from}&until=${until}&recordPacking=json`);
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
