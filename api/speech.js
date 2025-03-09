@@ -1,11 +1,8 @@
-export default async function handler(request) {
+// Edge Functionsではなく、通常のServerless Functionsとして実装
+const handler = async (req, res) => {
   try {
-    const fullUrl = new URL(request.url, "http://localhost");
-    const speaker = fullUrl.searchParams.get("speaker");
-    const from = fullUrl.searchParams.get("from");
-    const until = fullUrl.searchParams.get("until");
+    const { speaker, from, until } = req.query;
 
-    // 外部APIからのレスポンスをそのまま流す（ストリーミング）
     const response = await fetch(
       `https://kokkai.ndl.go.jp/api/speech?${new URLSearchParams({
         speaker,
@@ -15,18 +12,11 @@ export default async function handler(request) {
       })}`
     );
 
-    // レスポンスをそのまま返す（パースせずに）
-    return new Response(response.body, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    res.status(500).json({ error: error.message });
   }
-}
+};
+
+export default handler;
