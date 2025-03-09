@@ -13,18 +13,12 @@ export default async function GET(request) {
     });
     console.log(3, params);
     //APIにリクエストを送信
-    console.log("3. Starting fetch request...");
-
     const response = await fetch(
       `https://kokkai.ndl.go.jp/api/speech?speaker=${request.query.speaker}&from=${request.query.from}&until=${request.query.until}&recordPacking=json`
     );
-    console.log("4. Fetch completed, status:", response.status);
-
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
-    console.log("5. Starting JSON parse...");
-
     //APIから返ってきたデータを取得
     const data = await response.json();
     console.log(4, data);
