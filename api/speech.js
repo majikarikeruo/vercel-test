@@ -11,6 +11,7 @@ export default async function GET(request) {
       from: request.query.from,
       until: request.query.until,
     });
+    console.log(3, params);
     //APIにリクエストを送信
     const response = await fetch(`/api/speech?${params}`);
     if (!response.ok) {
