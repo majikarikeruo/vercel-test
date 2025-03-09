@@ -36,17 +36,7 @@ export default async function GET(request) {
       },
     });
   } catch (error) {
-    console.error("Error details:", {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-    });
-
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    console.error("Error fetching data:", error);
+    return new Response(JSON.stringify(error), { status: 500 });
   }
 }
