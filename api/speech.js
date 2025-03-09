@@ -10,7 +10,7 @@ export default async function handler(request) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5秒でタイムアウト
 
-    const response = await fetch(`https://kokkai.ndl.go.jp/api/speech?speaker=${speaker}&from=${from}&until=${until}&recordPacking=json`, {
+    const response = await fetch(`https://kokkai.ndl.go.jp/api/speech?speaker=${speaker}&from=2024-12-24&recordPacking=json`, {
       signal: controller.signal,
     });
     clearTimeout(timeoutId);
