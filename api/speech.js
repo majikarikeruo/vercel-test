@@ -1,36 +1,52 @@
 //1つ目の引数がフロントからデータを受け取る固有の場所になっている
-export default async function GET(request) {
-  //バックエンドのルート定義
-  console.log(1, request.params);
-  console.log(2, request.query);
-
+export default async function handler(request) {
   try {
-    // URLSearchParamsを使って、検索用のクエリパラメータ（speaker、from、until）を設定
-    const params = new URLSearchParams({
-      speaker: request.query.speaker,
-      from: request.query.from,
-      until: request.query.until,
-    });
-    console.log(3, params);
-    //APIにリクエストを送信
-    const response = await fetch(
-      `https://kokkai.ndl.go.jp/api/speech?speaker=${request.query.speaker}&from=${request.query.from}&until=${request.query.until}&recordPacking=json`
-    );
+    const fullUrl = new URL(request.url, "http://localhost");
+    const speaker = fullUrl.searchParams.get("speaker");
+    const from = fullUrl.searchParams.get("from");
+    const until = fullUrl.searchParams.get("until");
+
+    console.log("1. Received params:", { speaker, from, until });
+
+    const apiUrl = `https://kokkai.ndl.go.jp/api/speech?${new URLSearchParams({
+      speaker,
+      from,
+      until,
+      recordPacking: "json",
+    })}`;
+
+    console.log("2. Requesting URL:", apiUrl);
+
+    // fetchの前後でログを追加
+    console.log("3. Starting fetch request...");
+    const response = await fetch(apiUrl);
+    console.log("4. Fetch completed, status:", response.status);
+
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      throw new Error(`API responded with status: ${response.status}`);
     }
-    //APIから返ってきたデータを取得
+
+    console.log("5. Starting JSON parse...");
     const data = await response.json();
-    console.log(4, data);
-    //フロントにデータを返す
+    console.log("6. JSON parse completed");
+
     return new Response(JSON.stringify(data), {
-      status: 200,
       headers: {
-        "content-type": "application/json",
+        "Content-Type": "application/json",
       },
     });
   } catch (error) {
-    console.error("Error fetching data:", error);
-    return new Response(JSON.stringify(error), { status: 500 });
+    console.error("Error details:", {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+    });
+
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 }
