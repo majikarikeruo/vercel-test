@@ -13,7 +13,7 @@ const handler = async (req, res) => {
     );
 
     const data = await response.json();
-    res.json(data);
+    res.json(data.speechRecord || []);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
