@@ -34,13 +34,7 @@ export default async function handler(request) {
     const data = JSON.parse(responseText);
     console.log("4. Parsed data:", data);
 
-    return new Response(JSON.stringify(data), {
-      headers: {
-        "Content-Type": "application/json",
-        // キャッシュヘッダーを追加
-        "Cache-Control": "public, max-age=60, s-maxage=60",
-      },
-    });
+    return Response.json(data); // 新しい Response.json() メソッドを使用
   } catch (error) {
     console.error("Error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
